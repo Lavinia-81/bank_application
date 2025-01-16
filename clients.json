@@ -1,0 +1,25 @@
+{
+  "100": {
+    "name": "Lavinia",
+    "phone": "076123w45",
+    "town": "Manchester"
+  },
+
+  "101": {
+    "name": "Sebastian",
+    "phone": "076123w43",
+    "town": "Nothingham"
+  },
+
+ "102": {
+    "name": "Lee",
+    "phone": "076123w48",
+    "town": "Milano"
+  },
+
+ "103": {
+    "name": "David",
+    "phone": "076123w49",
+    "town": "Paris"
+  }
+}
