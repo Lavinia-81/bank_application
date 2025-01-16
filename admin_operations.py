@@ -3,7 +3,7 @@ import json
 # am facut tema trebuie reanalizata
 # def remove_user(user_to_be_deleted: str, bank_path: str = "bank.json", auth_path: str = "auth.json",
 # clients_path: str = "clients.json"):
-#
+#comment here
 #     with open(bank_path, "r") as f:
 #         accounts = json.loads(f.read())
 #
