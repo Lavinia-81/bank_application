@@ -55,7 +55,6 @@ def login(user: str, auth_path: str = "auth.json") -> str:
 
         return user
 
-
 def account_balance(user: str, bank_path: str = "bank.json") -> str:
     with open(bank_path, "r") as f:
         accounts = json.loads(f.read())
@@ -76,10 +75,11 @@ def convert_account(user: str, to_currency: str, bank_path: str = "bank.json"):
 
     with open(bank_path, "w") as f:
         f.write(json.dumps(accounts, indent=4))
+
         # return "Account converted from x to y"
 
 
-def convert_currency(amount: int, from_currency: str, to_currency: str, currencies_json = "currencies.json"):
+def convert_currency(amount: int, from_currency: str, to_currency: str, currencies_json = "currencies.json") -> int:
     with open(currencies_json, "r") as f:
         conversion_rates = json.loads(f.read())
 
@@ -103,49 +103,76 @@ def transfer_money(sender: str, receiver: str, amount: int, bank_path: str = "ba
         with open(bank_path, "w") as f:
             f.write(json.dumps(accounts, indent=4))
 
+        print(f"{Fore.GREEN}Ati transferat cu succes. Cont curent: {Style.RESET_ALL}{accounts[sender]['value']} {accounts[sender]['currency']}")
+
     else:
         print(f"{Fore.RED}Not enough money to send.{Style.RESET_ALL}")
+
+
+def withdraw_money(user: str, amount: int, bank_path: str = "bank.json"):
+    with open(bank_path, "r") as f:
+        accounts = json.loads(f.read())
+
+    if user in accounts["value"]:
+        if amount <= accounts:
+            return user
+
 
 def get_username_by_phone(phone_number: str, clients_path: str = "clients.json"):
     with open(clients_path, "r") as f:
         clients = json.loads(f.read())
+
     for user_id, details in clients.items():
         if details["phone"] == phone_number:
             return user_id
 
     print(f"{Fore.RED}Phone number not found.{Style.RESET_ALL}")
+    return None
 
 if __name__ == '__main__':
     username = input(f"{Fore.BLUE}Please enter your username: {Style.RESET_ALL}")
     username = login(username)
     menu = USER_MENU if username != "admin" else ADMIN_MENU
 
-    while True:
-        user_pick = input(menu)
+    user_pick = input(menu)
 
+    while True:
         if username != "admin":
             match user_pick:
                 case "1":
                     print(account_balance(username))
                 case "2":
-                    amount = int(input(F"{Fore.BLUE}What currency do you prefer: {Style.RESET_ALL}"))
-                    receiver = input(f"{Fore.BLUE}Who is the receiver? {Style.RESET_ALL}")
-                    transfer_money(username, receiver, amount)
+                    amount = int(input(F"{Fore.BLUE}Amount of money in your current currency: {Style.RESET_ALL}"))
+                    phone_number = input(f"{Fore.BLUE}Who is the receiver? {Style.RESET_ALL}")
+                    receiver_id = get_username_by_phone(phone_number)
+                    if receiver_id:
+                        transfer_money(username, receiver_id, amount)
                 case "3":
-                    pass
+                    amount = int(input(f"{Fore.BLUE}How much would you like to withdraw? {Style.RESET_ALL}"))
+                    try:
+                        withdraw_money(username, amount)
+                        print(f"{Fore.GREEN}Withdrawal successful!{Style.RESET_ALL}")
+                    except Exception as e: print(
+                        f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+
                 case "4":
                     pass
                 case "5":
                     currency = input(f"{Fore.BLUE}What currency do you need to transfer? {Style.RESET_ALL}")
-
+                    # verificati sa fie currency corect
                     convert_account(username, currency)
                 case "6":
                     username = input(f"{Fore.GREEN}Type a new user: {Style.RESET_ALL}")
                     username = login(username)
                 case "7":
                     exit(0)
+                case "8":
+                    pass
                 case _:
                     pass
+            time.sleep(3)
+            menu = USER_MENU if username != "admin" else ADMIN_MENU
+            user_pick = input(menu)
         else:
             match user_pick:
                 case "1":
@@ -166,6 +193,6 @@ if __name__ == '__main__':
 
         time.sleep(3)
         menu = USER_MENU if username != "admin" else ADMIN_MENU
-
+        user_pick = input(menu)
 
 
