@@ -1,40 +1,42 @@
 import os
 import json
 import time
+from getpass import getpass
+from colorama import init, Fore, Style
 
 import pwinput
 import admin_operations
-from getpass import getpass
 
+# Initializează colorama
+init(autoreset=True)
 
-USER_MENU = """
-1. Sa ceara bank statement -> valoare contului
-2. Sa transfere unui alt utilizator # tema introdu nr de telefon
-3. Sa scoata bani din cont # tema
-4. Sa adauge bani in cont # tema
-5. Sa converteasca banii
-6. Sign out
-7. Exit
+USER_MENU = f"""
+{Fore.GREEN}1.Sa ceara bank statement -> valoare contului{Style.RESET_ALL} 
+{Fore.GREEN}2. Sa transfere unui alt utilizator{Style.RESET_ALL}
+{Fore.GREEN}3. Sa scoata bani din cont{Style.RESET_ALL}
+{Fore.GREEN}4. Sa adauge bani in cont{Style.RESET_ALL}
+{Fore.GREEN}5. Sa converteasca banii{Style.RESET_ALL}
+{Fore.RED}6. Sign out{Style.RESET_ALL}
+{Fore.YELLOW}7. Exit{Style.RESET_ALL}
 
 Type in choice: """
 
-ADMIN_MENU = """
-1. Sa se stearga clientul (admin-only)
-2. Sa adauge un client nou (admin-only)
-3. Sign out
-4. Show users
-5. Exit
+ADMIN_MENU = f"""
+{Fore.BLUE}1. Sa se stearga clientul (admin-only){Style.RESET_ALL}
+{Fore.BLUE}2. Sa adauge un client nou (admin-only){Style.RESET_ALL}
+{Fore.RED}3. Sign out{Style.RESET_ALL}
+{Fore.GREEN}4. Show users{Style.RESET_ALL}
+{Fore.YELLOW}5. Exit{Style.RESET_ALL}
 """
 
 # ENVIRONMENT VARIABLE
-
 # print(os.environ['admin_bank'])
 
 
 def login(user: str, auth_path: str = "auth.json") -> str:
     if user == "admin":
         for _ in range(3):
-            passwd = getpass("Type in password: ")
+            passwd = getpass(f"{Fore.GREEN}Type in password: {Style.RESET_ALL}")
             if passwd == os.environ['admin_bank']:
                 return user
         return ""
@@ -43,13 +45,13 @@ def login(user: str, auth_path: str = "auth.json") -> str:
             credentials = json.loads(f.read())
 
         while user not in credentials:
-            print("User not found in database.")
-            user = input("Type in user: ")
+            print(f"{Fore.BLUE}User found in database.{Style.RESET_ALL}")
+            user = input(f"{Fore.YELLOW}Type in ID user: {Style.RESET_ALL}")
 
-        passwd = input('PW: ')
+        passwd = input(f'{Fore.MAGENTA}PW: {Style.RESET_ALL}')
 
         while passwd != credentials[user]:
-            passwd = input("Wrong password: ")
+            passwd = input(f"{Fore.RED}Wrong password: {Style.RESET_ALL}")
 
         return user
 
@@ -61,16 +63,8 @@ def account_balance(user: str, bank_path: str = "bank.json") -> str:
     value = accounts[user]["value"]
     currency = accounts[user]["currency"]
 
-    return f"Your account is worth : {value}{currency}"
+    return f"{Fore.MAGENTA}Your account is worth : {value}{currency}"
 
-
-# ##############################
-# def withdraw_money(user: str, amount: int, bank_path: str = "bank.json"):
-#     with open(bank_path, "r") as f:
-#         accounts = json.loads(f.read())
-#
-#     if amount <= accounts:
-# ####################
 
 def convert_account(user: str, to_currency: str, bank_path: str = "bank.json"):
     with open(bank_path, "r") as f:
@@ -110,7 +104,7 @@ def transfer_money(sender: str, receiver: str, amount: int, bank_path: str = "ba
             f.write(json.dumps(accounts, indent=4))
 
     else:
-        print("Not enough money to send")
+        print(f"{Fore.RED}Not enough money to send.{Style.RESET_ALL}")
 
 def get_username_by_phone(phone_number: str, clients_path: str = "clients.json"):
     with open(clients_path, "r") as f:
@@ -119,10 +113,10 @@ def get_username_by_phone(phone_number: str, clients_path: str = "clients.json")
         if details["phone"] == phone_number:
             return user_id
 
-    print("Phone number not found")
+    print(f"{Fore.RED}Phone number not found.{Style.RESET_ALL}")
 
 if __name__ == '__main__':
-    username = input("Please enter your username: ")
+    username = input(f"{Fore.BLUE}Please enter your username: {Style.RESET_ALL}")
     username = login(username)
     menu = USER_MENU if username != "admin" else ADMIN_MENU
 
@@ -134,19 +128,19 @@ if __name__ == '__main__':
                 case "1":
                     print(account_balance(username))
                 case "2":
-                    amount = int(input("Citeste de la tastatura suma de bani in valuta personala: "))
-                    receiver = input("Cui vrei sa ii trimiti bani?")
+                    amount = int(input(F"{Fore.BLUE}What currency do you prefer: {Style.RESET_ALL}"))
+                    receiver = input(f"{Fore.BLUE}Who is the receiver? {Style.RESET_ALL}")
                     transfer_money(username, receiver, amount)
                 case "3":
                     pass
                 case "4":
                     pass
                 case "5":
-                    currency = input("Ce vrei sa transformi? ")
-                    # tema verificati sa fie currency corect
+                    currency = input(f"{Fore.BLUE}What currency do you need to transfer? {Style.RESET_ALL}")
+
                     convert_account(username, currency)
                 case "6":
-                    username = input("Citeste un nou user")
+                    username = input(f"{Fore.GREEN}Type a new user: {Style.RESET_ALL}")
                     username = login(username)
                 case "7":
                     exit(0)
@@ -155,12 +149,12 @@ if __name__ == '__main__':
         else:
             match user_pick:
                 case "1":
-                    user_to_delete = input("Ce user doresti sa stergi? ")
+                    user_to_delete = input(f"{Fore.YELLOW}Which user do you want to delete? {Style.RESET_ALL}")
                     admin_operations.remove_user(user_to_delete)
                 case "2":
                     pass
                 case "3":
-                    username = input("Citeste un nou user: ")
+                    username = input(f"{Fore.BLUE}Input a new user: {Style.RESET_ALL}")
                     username = login(username)
                 case "4":
                     with open("bank.json", "r") as f:
