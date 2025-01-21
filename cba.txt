@@ -1,0 +1,6 @@
+ {
+"dan": "telefon",
+"adam": "masina",
+"george": "avion",
+"kamil": "casa"
+}
