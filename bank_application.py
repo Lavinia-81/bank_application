@@ -94,15 +94,15 @@ def transfer_money(sender: str, receiver: str, amount: int, bank_path: str = "ba
     with open(bank_path, "r") as f:
         accounts = json.loads(f.read())
 
-    if amount <= accounts[sender]["values"]:
+    if amount <= accounts[sender]['values']:
         if accounts[sender]["currency"] == accounts[receiver]["currency"]:
-            accounts[receiver]["value"] += amount
-            accounts[sender]["value"] -= amount
+            accounts[receiver]['value'] += amount
+            accounts[sender]['value'] -= amount
         else:
             amount_receiver_currency = convert_currency(amount, accounts[sender]["currency"],
                                                         accounts[receiver]["currency"])
-            accounts[receiver]["value"] += amount_receiver_currency
-            accounts[sender]["value"] -= amount
+            accounts[receiver]['value'] += amount_receiver_currency
+            accounts[sender]['value'] -= amount
 
         with open(bank_path, "w") as f:
             f.write(json.dumps(accounts, indent=4))
@@ -132,12 +132,12 @@ def add_money(user: str, amount: int, bank_path: str = "bank.json"):
         return user
 
 
-def get_username_by_phone(phone: str, clients_path: str = "clients.json"):
+def get_username_by_phone(phone_number: str, clients_path: str = "clients.json"):
     with open(clients_path, "r") as f:
         clients = json.loads(f.read())
 
     for user_id, details in clients.items():
-        if details["phone"] == phone:
+        if details["phone"] == phone_number:
             return user_id
 
     print(f"{Fore.RED}Phone number not found.{Style.RESET_ALL}")
@@ -184,8 +184,9 @@ if __name__ == '__main__':
                     username = input(f"{Fore.BLUE}Type a new user: {Style.RESET_ALL}")
                     username = login(username)
                     if username:
-                      break
-                    else: print(f"{Fore.RED}Invalid username, please try again.{Style.RESET_ALL}")
+                        break
+                    else:
+                        print(f"{Fore.RED}Invalid username, please try again.{Style.RESET_ALL}")
                 case "7":
                     exit(0)
                 case "8":
@@ -207,8 +208,9 @@ if __name__ == '__main__':
                     username = input(f"{Fore.BLUE}Type a new user: {Style.RESET_ALL}")
                     username = login(username)
                     if username:
-                      break
-                    else: print(f"{Fore.RED}Invalid username, please try again.{Style.RESET_ALL}")
+                        break
+                    else:
+                        print(f"{Fore.RED}Invalid username, please try again.{Style.RESET_ALL}")
                 case "4":
                     with open("bank.json", "r") as f:
                         print(f.read())
@@ -216,7 +218,6 @@ if __name__ == '__main__':
                     # option 1
                     # break
                     exit(0)
-
 
         time.sleep(3)
         menu = USER_MENU if username != "admin" else ADMIN_MENU
