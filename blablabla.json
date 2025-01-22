@@ -1,9 +1,0 @@
-{
-  "abc": 344,
-  "asvd": [
-    1, 2, 3
-  ]
-}
-
-// json.lods // cand ai un text in json si vrei sa il transformi in dictionar
-// json.damps // cand ai un dictionar si vrei sa-l transformi in text json
